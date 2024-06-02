@@ -6,6 +6,9 @@ using UnityEngine.UI;
 public class SwingingMechanics : MonoBehaviour
 {
     private Rigidbody MaleDummyRB;
+    public Rigidbody leftForearmRB;
+    public Rigidbody rightForearmRB;
+
     public Transform cameraTransform;
 
     public Graphic crosshair;
@@ -45,7 +48,7 @@ public class SwingingMechanics : MonoBehaviour
         rightWeb.SetActive(false);
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        MaleDummyRB = this.GetComponent<Rigidbody>();
+        MaleDummyRB = GetComponent<Rigidbody>();
     }
 
     void FixedUpdate()
@@ -86,7 +89,7 @@ public class SwingingMechanics : MonoBehaviour
         audioSourceAir.volume = volumeLevel;
 
         // Player always looks forward
-        transform.localRotation = Quaternion.Euler(0f, cameraTransform.eulerAngles.y, 0f);
+        //transform.localRotation = Quaternion.Euler(0f, cameraTransform.eulerAngles.y, 0f);
 
         // Check if eligable for swing
         RaycastHit aimingAt;
@@ -151,7 +154,7 @@ public class SwingingMechanics : MonoBehaviour
 
         // Checks for wsad movement and applies the physics
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.1f))
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, 0.5f))
         {
             groundMovement(hit);
         }
@@ -167,7 +170,7 @@ public class SwingingMechanics : MonoBehaviour
         {
             float overSpeed = speed - speedLimit;
 
-            float targetSpeed = speedLimit + (overSpeed / 1.1f);
+            float targetSpeed = speedLimit + (overSpeed * 0.7f);
 
             MaleDummyRB.velocity = MaleDummyRB.velocity.normalized * targetSpeed;
         }
@@ -175,122 +178,56 @@ public class SwingingMechanics : MonoBehaviour
 
     void groundMovement(RaycastHit hit)
     {
-        //if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A))
-        //{
-        //    transform.Translate(0, 0, (groundMovementForce * Time.deltaTime) / 2);
-        //    transform.Translate((-groundMovementForce * Time.deltaTime) / 2, 0, 0);
-        //}
-        //else if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D))
-        //{
-        //    transform.Translate(0, 0, (groundMovementForce * Time.deltaTime) / 2);
-        //    transform.Translate((groundMovementForce * Time.deltaTime) / 2, 0, 0);
-        //}
-        //else if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A))
-        //{
-        //    transform.Translate(0, 0, (-groundMovementForce * Time.deltaTime) / 2);
-        //    transform.Translate((-groundMovementForce * Time.deltaTime) / 2, 0, 0);
-        //}
-        //else if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D))
-        //{
-        //    transform.Translate(0, 0, (-groundMovementForce * Time.deltaTime) / 2);
-        //    transform.Translate((groundMovementForce * Time.deltaTime) / 2, 0, 0);
-        //}
-        //else if (Input.GetKey(KeyCode.W))
-        //{
-        //    transform.Translate(0, 0, groundMovementForce * Time.deltaTime);
-        //}
-        //else if (Input.GetKey(KeyCode.A))
-        //{
-        //    transform.Translate(-groundMovementForce * Time.deltaTime, 0, 0);
-        //}
-        //else if (Input.GetKey(KeyCode.D))
-        //{
-        //    transform.Translate(groundMovementForce * Time.deltaTime, 0, 0);
-        //}
-        //else if (Input.GetKey(KeyCode.S))
-        //{
-        //    transform.Translate(0, 0, -groundMovementForce * Time.deltaTime);
-        //}
+        // Get input from the player
+        float moveHorizontal = Input.GetAxis("Horizontal");
+        float moveVertical = Input.GetAxis("Vertical");
 
-        //Vector3 newPos = new Vector3 (transform.position.x, hit.point.y + 0.05f, transform.position.z);
-        //transform.position = newPos;
+        // Create a movement vector based on the input
+        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
 
-        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A))
-        {
-            MaleDummyRB.AddForce((transform.forward * groundMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-            MaleDummyRB.AddForce((-transform.right * groundMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-        }
-        else if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D))
-        {
-            MaleDummyRB.AddForce((transform.forward * groundMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-            MaleDummyRB.AddForce((transform.right * groundMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-        }
-        else if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A))
-        {
-            MaleDummyRB.AddForce((-transform.forward * groundMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-            MaleDummyRB.AddForce((-transform.right * groundMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-        }
-        else if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D))
-        {
-            MaleDummyRB.AddForce((-transform.forward * groundMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-            MaleDummyRB.AddForce((transform.right * groundMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-        }
-        else if (Input.GetKey(KeyCode.W))
-        {
-            MaleDummyRB.AddForce(transform.forward * groundMovementForce * Time.deltaTime, ForceMode.VelocityChange);
-        }
-        else if (Input.GetKey(KeyCode.A))
-        {
-            MaleDummyRB.AddForce(-transform.right * groundMovementForce * Time.deltaTime, ForceMode.VelocityChange);
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            MaleDummyRB.AddForce(transform.right * groundMovementForce * Time.deltaTime, ForceMode.VelocityChange);
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            MaleDummyRB.AddForce(-transform.forward * groundMovementForce * Time.deltaTime, ForceMode.VelocityChange);
-        }
+        // Calculate the force direction relative to the camera's direction
+        Vector3 cameraForward = cameraTransform.forward;
+        Vector3 cameraRight = cameraTransform.right;
+
+        // Ensure the forward vector is always on the horizontal plane
+        cameraForward.y = 0f;
+        cameraRight.y = 0f;
+
+        // Normalize vectors (important if the camera is tilted)
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        // Calculate the direction in which to apply the force
+        Vector3 forceDirection = (cameraForward * moveVertical + cameraRight * moveHorizontal).normalized;
+
+        MaleDummyRB.AddForce(forceDirection * groundMovementForce * Time.deltaTime, ForceMode.VelocityChange);
     }
 
     void airMovement()
     {
-        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A))
-        {
-            MaleDummyRB.AddForce((transform.forward * airMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-            MaleDummyRB.AddForce((-transform.right * airMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-        }
-        else if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D))
-        {
-            MaleDummyRB.AddForce((transform.forward * airMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-            MaleDummyRB.AddForce((transform.right * airMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-        }
-        else if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A))
-        {
-            MaleDummyRB.AddForce((-transform.forward * airMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-            MaleDummyRB.AddForce((-transform.right * airMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-        }
-        else if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D))
-        {
-            MaleDummyRB.AddForce((-transform.forward * airMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-            MaleDummyRB.AddForce((transform.right * airMovementForce * Time.deltaTime) / 2, ForceMode.VelocityChange);
-        }
-        else if (Input.GetKey(KeyCode.W))
-        {
-            MaleDummyRB.AddForce(transform.forward * airMovementForce * Time.deltaTime, ForceMode.VelocityChange);
-        }
-        else if (Input.GetKey(KeyCode.A))
-        {
-            MaleDummyRB.AddForce(-transform.right * airMovementForce * Time.deltaTime, ForceMode.VelocityChange);
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            MaleDummyRB.AddForce(transform.right * airMovementForce * Time.deltaTime, ForceMode.VelocityChange);
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            MaleDummyRB.AddForce(-transform.forward * airMovementForce * Time.deltaTime, ForceMode.VelocityChange);
-        }
+        // Get input from the player
+        float moveHorizontal = Input.GetAxis("Horizontal");
+        float moveVertical = Input.GetAxis("Vertical");
+
+        // Create a movement vector based on the input
+        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
+
+        // Calculate the force direction relative to the camera's direction
+        Vector3 cameraForward = cameraTransform.forward;
+        Vector3 cameraRight = cameraTransform.right;
+
+        // Ensure the forward vector is always on the horizontal plane
+        cameraForward.y = 0f;
+        cameraRight.y = 0f;
+
+        // Normalize vectors (important if the camera is tilted)
+        //cameraForward.Normalize();
+        //cameraRight.Normalize();
+
+        // Calculate the direction in which to apply the force
+        Vector3 forceDirection = (cameraForward * moveVertical + cameraRight * moveHorizontal).normalized;
+
+        MaleDummyRB.AddForce(forceDirection * airMovementForce * Time.deltaTime, ForceMode.VelocityChange);
     }
 
     void animateWeb(Vector3 swingPoint, GameObject web, GameObject hand)
@@ -321,6 +258,15 @@ public class SwingingMechanics : MonoBehaviour
 
         // Apply the swing force to the player's Rigidbody
         MaleDummyRB.AddForce(swingForceVector, ForceMode.VelocityChange);
+
+        if (hand.name == "B-palm_02_L")
+        {
+            leftForearmRB.AddForce(swingForceVector * 0.05f, ForceMode.Impulse);
+        }
+        else
+        {
+            rightForearmRB.AddForce(swingForceVector * 0.05f, ForceMode.Impulse);
+        }
     }
 
     private void OnDrawGizmos()
