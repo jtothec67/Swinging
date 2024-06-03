@@ -5,7 +5,7 @@ using UnityEngine;
 public class EmenyBehaviour : MonoBehaviour
 {
     public GameObject bullet;
-    public GameObject player;
+    private GameObject player;
     public ParticleSystem explosion;
 
     public AudioSource audioSource;
@@ -66,13 +66,16 @@ public class EmenyBehaviour : MonoBehaviour
         {
             if (col.gameObject.CompareTag("Player"))
             {
+                player = col.gameObject;
+
                 RaycastHit toPlayer;
-                Physics.Raycast(transform.position, player.transform.position - transform.position + new Vector3(0f, 1f, 0f), out toPlayer, Mathf.Infinity);
-                if(toPlayer.collider.CompareTag("Player"))
+                Physics.Raycast(transform.position, col.gameObject.transform.position - transform.position, out toPlayer, Mathf.Infinity);
+
+                if (toPlayer.collider.CompareTag("Player"))
                 {
                     canSeePlayer = true;
+                    
                 }
-                
             }
         }
 

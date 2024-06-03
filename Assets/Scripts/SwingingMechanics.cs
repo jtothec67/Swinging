@@ -106,7 +106,7 @@ public class SwingingMechanics : MonoBehaviour
                 audioSourceSwing.pitch = Random.Range(0.9f, 1f);
                 audioSourceSwing.PlayOneShot(audioClipSwing);
             }
-            
+
             if (Input.GetMouseButtonDown(1))
             {
                 rightSwingPoint = aimingAt.point;
@@ -257,15 +257,15 @@ public class SwingingMechanics : MonoBehaviour
         Vector3 swingForceVector = playerToSwingPoint.normalized * dotProduct * swingForce;
 
         // Apply the swing force to the player's Rigidbody
-        MaleDummyRB.AddForce(swingForceVector, ForceMode.VelocityChange);
+        //MaleDummyRB.AddForce(swingForceVector, ForceMode.VelocityChange);
 
         if (hand.name == "B-palm_02_L")
         {
-            leftForearmRB.AddForce(swingForceVector * 0.05f, ForceMode.Impulse);
+            leftForearmRB.AddForce(swingForceVector, ForceMode.VelocityChange);
         }
         else
         {
-            rightForearmRB.AddForce(swingForceVector * 0.05f, ForceMode.Impulse);
+            rightForearmRB.AddForce(swingForceVector, ForceMode.VelocityChange);
         }
     }
 
