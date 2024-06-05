@@ -33,6 +33,7 @@ public class SwingingMechanics : MonoBehaviour
     public float webLimit = 10f;
     public float airMovementForce = 0.5f;
     public float groundMovementForce = 2;
+    public float endOfSwingForce = 3f;
     
     public float speed;
 
@@ -130,6 +131,7 @@ public class SwingingMechanics : MonoBehaviour
         else if (Input.GetMouseButtonUp(0))
         {
             // Stop web swinging
+            applyEndOfSwingForce();
             leftSwingPoint = nullVector;
             leftWeb.SetActive(false);
         }
@@ -140,6 +142,7 @@ public class SwingingMechanics : MonoBehaviour
         }
         else if (Input.GetMouseButtonUp(1))
         {
+            applyEndOfSwingForce();
             rightSwingPoint = nullVector;
             rightWeb.SetActive(false);
         }
@@ -267,6 +270,16 @@ public class SwingingMechanics : MonoBehaviour
         {
             rightForearmRB.AddForce(swingForceVector, ForceMode.VelocityChange);
         }
+    }
+
+    void applyEndOfSwingForce()
+    {
+        if (MaleDummyRB.velocity.y < 0) return;
+
+        Vector3 force = MaleDummyRB.velocity.normalized * endOfSwingForce;
+
+        // Apply the swing force to the player's Rigidbody
+        MaleDummyRB.AddForce(force, ForceMode.VelocityChange);
     }
 
     private void OnDrawGizmos()
