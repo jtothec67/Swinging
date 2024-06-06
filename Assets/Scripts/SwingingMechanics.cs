@@ -22,6 +22,12 @@ public class SwingingMechanics : MonoBehaviour
     private Vector3 rightSwingPoint;
     
     private float webDistance;
+
+    public float leftWebDist;
+    public float rightWebDist;
+
+    public bool leftOnce;
+    public bool rightOnce;
     
     public AudioSource audioSourceSwing;
     public AudioClip audioClipSwing;
@@ -29,6 +35,7 @@ public class SwingingMechanics : MonoBehaviour
     public AudioSource audioSourceAir;
 
     public float swingForce = 10f;
+    public float farSwingForce = 10f;
     public float speedLimit = 15f;
     public float webLimit = 10f;
     public float airMovementForce = 0.5f;
@@ -66,7 +73,7 @@ public class SwingingMechanics : MonoBehaviour
         }
 
         // Does maths for limiting player speed
-        controlSpeed();
+       //controlSpeed();
     }
 
     void Update()
@@ -134,6 +141,7 @@ public class SwingingMechanics : MonoBehaviour
             applyEndOfSwingForce();
             leftSwingPoint = nullVector;
             leftWeb.SetActive(false);
+            leftOnce = true;
         }
 
         if (Input.GetKey(KeyCode.Mouse1))
@@ -145,6 +153,7 @@ public class SwingingMechanics : MonoBehaviour
             applyEndOfSwingForce();
             rightSwingPoint = nullVector;
             rightWeb.SetActive(false);
+            rightOnce = true;
         }
 
         
@@ -176,6 +185,7 @@ public class SwingingMechanics : MonoBehaviour
             float targetSpeed = speedLimit + (overSpeed * 0.7f);
 
             MaleDummyRB.velocity = MaleDummyRB.velocity.normalized * targetSpeed;
+            MaleDummyRB.angularVelocity = MaleDummyRB.angularVelocity;
         }
     }
 
@@ -242,6 +252,16 @@ public class SwingingMechanics : MonoBehaviour
         web.transform.LookAt(swingPoint);
         web.transform.Rotate(90.0f, 0.0f, 0.0f, Space.Self);
         webDistance = Vector3.Distance(swingPoint, hand.transform.position);
+        if (leftOnce && hand.name == "B-palm_02_L")
+        {
+            leftWebDist = webDistance;
+            leftOnce = false;
+        }
+        else if (rightOnce && hand.name == "B-palm_02_R")
+        {
+            rightWebDist = webDistance;
+            rightOnce = false;
+        }
         Vector3 rescale = web.transform.localScale;
         rescale.y = webDistance / 2;
         web.transform.localScale = rescale;
@@ -257,17 +277,32 @@ public class SwingingMechanics : MonoBehaviour
 
         // Calculate the swing force using dot product
         float dotProduct = Vector3.Dot(playerDirection, playerToSwingPoint.normalized);
-        Vector3 swingForceVector = playerToSwingPoint.normalized * dotProduct * swingForce;
 
         // Apply the swing force to the player's Rigidbody
         //MaleDummyRB.AddForce(swingForceVector, ForceMode.VelocityChange);
 
-        if (hand.name == "B-palm_02_L")
+        // Left hand and near swing
+        if (hand.name == "B-palm_02_L" && leftWebDist < playerToSwingPoint.magnitude)
         {
+            Vector3 swingForceVector = playerToSwingPoint.normalized * dotProduct * farSwingForce;
             leftForearmRB.AddForce(swingForceVector, ForceMode.VelocityChange);
         }
+        // Left hand and far swing
+        else if (hand.name == "B-palm_02_L")
+        {
+            Vector3 swingForceVector = playerToSwingPoint.normalized * dotProduct * swingForce;
+            leftForearmRB.AddForce(swingForceVector, ForceMode.VelocityChange);
+        }
+        // Right hand and near swing
+        else if (rightWebDist < playerToSwingPoint.magnitude)
+        {
+            Vector3 swingForceVector = playerToSwingPoint.normalized * dotProduct * farSwingForce;
+            rightForearmRB.AddForce(swingForceVector, ForceMode.VelocityChange);
+        }
+        // Right hand and far swing
         else
         {
+            Vector3 swingForceVector = playerToSwingPoint.normalized * dotProduct * swingForce;
             rightForearmRB.AddForce(swingForceVector, ForceMode.VelocityChange);
         }
     }

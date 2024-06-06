@@ -8,8 +8,8 @@ public class PointCalculator : MonoBehaviour
     private bool once = false;
     public float airTime = 0f;
 
-    public int flips = 0;
-    public int spins = 0;
+    public float flips = 0f;
+    public float spins = 0f;
 
     public float previousZRot = 0f;
     public float totalZRot = 0f;
@@ -73,26 +73,26 @@ public class PointCalculator : MonoBehaviour
 
         airTime += Time.deltaTime;
 
-        if (totalZRot > 360)
+        if (totalZRot > 180)
         {
-            flips += 1;
+            flips += 0.5f;
             totalZRot = 0f;
         }
-        else if (totalZRot < -360)
+        else if (totalZRot < -180)
         {
-            flips += 1;
+            flips += 0.5f;
             totalZRot = 0f;
         }
 
         // Y axis rotation doesn't correlate to spins (??)
-        if (totalYRot > 360)
+        if (totalYRot > 180)
         {
-            spins += 1;
+            spins += 0.5f;
             totalYRot = 0f;
         }
-        else if (totalYRot < -360)
+        else if (totalYRot < -180)
         {
-            spins += 1;
+            spins += 0.5f;
             totalYRot = 0f;
         }
 
