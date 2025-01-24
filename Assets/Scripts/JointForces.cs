@@ -4,81 +4,65 @@ using UnityEngine;
 
 public class JointForces : MonoBehaviour
 {
-    public CharacterJoint chestJoint; // Assign this in the inspector
-    public float bendAngle = 45f; // Maximum angle to bend forward
-    public float springForce = 1000f; // Spring force to return to default position
-    public float damper = 10f; // Damper to control smoothness
+    public CharacterJoint chestJoint;
+    public CharacterJoint leftLegJoint;
+    public CharacterJoint rightLegJoint;
+    public float chestBendAngle = 30f;
+    public float chestBendSpeed = 5f;
+    public float legBendAngle = 30f;
+    public float legBendSpeed = 5f;
+
+    private Quaternion initialChestRotation;
+    private Quaternion initialLeftLegRotation;
+    private Quaternion initialRightLegRotation;
 
     void Start()
     {
-        if (chestJoint == null)
-        {
-            Debug.LogError("Please assign the chest CharacterJoint in the inspector.");
-            return;
-        }
-
-        ConfigureJoint();
+        initialChestRotation = chestJoint.transform.localRotation;
+        initialLeftLegRotation = leftLegJoint.transform.localRotation;
+        initialRightLegRotation = rightLegJoint.transform.localRotation;
     }
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.B)) // Use 'B' key to trigger the bend, change as needed
+        if (Input.GetKey(KeyCode.Q))
         {
-            BendCharacterForward();
+            BendForward();
+        }
+        else if (Input.GetKey(KeyCode.E))
+        {
+            BendBackward();
         }
         else
         {
-            ResetBend();
+            StopBending();
         }
     }
 
-    void ConfigureJoint()
+    void BendForward()
     {
-        SoftJointLimitSpring swingSpring = new SoftJointLimitSpring
-        {
-            spring = springForce,
-            damper = damper
-        };
+        Quaternion chestTargetRotation = initialChestRotation * Quaternion.Euler(0, chestBendAngle, 0);
+        chestJoint.transform.localRotation = Quaternion.Slerp(chestJoint.transform.localRotation, chestTargetRotation, Time.deltaTime * chestBendSpeed);
 
-        chestJoint.swingLimitSpring = swingSpring;
-        chestJoint.twistLimitSpring = swingSpring;
+        Quaternion legTargetRotation = Quaternion.Euler(0, -legBendAngle, 0);
+        leftLegJoint.transform.localRotation = Quaternion.Slerp(leftLegJoint.transform.localRotation, legTargetRotation, Time.deltaTime * legBendSpeed);
+        rightLegJoint.transform.localRotation = Quaternion.Slerp(rightLegJoint.transform.localRotation, legTargetRotation, Time.deltaTime * legBendSpeed);
     }
 
-    void BendCharacterForward()
+    void BendBackward()
     {
-        // Allow forward bend
-        SoftJointLimit swing1Limit = chestJoint.swing1Limit;
-        swing1Limit.limit = bendAngle;
-        chestJoint.swing1Limit = swing1Limit;
+        Quaternion chestTargetRotation = initialChestRotation * Quaternion.Euler(0, -chestBendAngle, 0);
+        chestJoint.transform.localRotation = Quaternion.Slerp(chestJoint.transform.localRotation, chestTargetRotation, Time.deltaTime * chestBendSpeed);
 
-        // Restrict side swing
-        SoftJointLimit swing2Limit = chestJoint.swing2Limit;
-        swing2Limit.limit = 0;
-        chestJoint.swing2Limit = swing2Limit;
-
-        // Restrict twisting
-        SoftJointLimit twistLimit = new SoftJointLimit();
-        twistLimit.limit = 0;
-        chestJoint.lowTwistLimit = twistLimit;
-        chestJoint.highTwistLimit = twistLimit;
+        Quaternion legTargetRotation = Quaternion.Euler(0, legBendAngle, 0);
+        leftLegJoint.transform.localRotation = Quaternion.Slerp(leftLegJoint.transform.localRotation, legTargetRotation, Time.deltaTime * legBendSpeed);
+        rightLegJoint.transform.localRotation = Quaternion.Slerp(rightLegJoint.transform.localRotation, legTargetRotation, Time.deltaTime * legBendSpeed);
     }
 
-    void ResetBend()
+    void StopBending()
     {
-        // Reset forward bend
-        SoftJointLimit swing1Limit = chestJoint.swing1Limit;
-        swing1Limit.limit = 0;
-        chestJoint.swing1Limit = swing1Limit;
-
-        // Reset side swing
-        SoftJointLimit swing2Limit = chestJoint.swing2Limit;
-        swing2Limit.limit = 0;
-        chestJoint.swing2Limit = swing2Limit;
-
-        // Reset twisting
-        SoftJointLimit twistLimit = new SoftJointLimit();
-        twistLimit.limit = 0;
-        chestJoint.lowTwistLimit = twistLimit;
-        chestJoint.highTwistLimit = twistLimit;
+        chestJoint.transform.localRotation = Quaternion.Slerp(chestJoint.transform.localRotation, initialChestRotation, Time.deltaTime * chestBendSpeed);
+        leftLegJoint.transform.localRotation = Quaternion.Slerp(leftLegJoint.transform.localRotation, initialLeftLegRotation, Time.deltaTime * legBendSpeed);
+        rightLegJoint.transform.localRotation = Quaternion.Slerp(rightLegJoint.transform.localRotation, initialRightLegRotation, Time.deltaTime * legBendSpeed);
     }
 }

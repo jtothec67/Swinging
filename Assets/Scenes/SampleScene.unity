@@ -2336,6 +2336,11 @@ Transform:
   m_Father: {fileID: 1203675029}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!144 &183139982 stripped
+CharacterJoint:
+  m_CorrespondingSourceObject: {fileID: 6077605041608845772, guid: 19fe40ea8adf4e94faee967f8b6c7ca4, type: 3}
+  m_PrefabInstance: {fileID: 609024031683531814}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &185330158
 GameObject:
   m_ObjectHideFlags: 0
@@ -18100,6 +18105,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 765371007}
   m_SourcePrefab: {fileID: 100100000, guid: 34521bacb5853c94aa3fdd25114c1aec, type: 3}
+--- !u!144 &672288855 stripped
+CharacterJoint:
+  m_CorrespondingSourceObject: {fileID: 7465634897857288298, guid: 19fe40ea8adf4e94faee967f8b6c7ca4, type: 3}
+  m_PrefabInstance: {fileID: 609024031683531814}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &676055135
 GameObject:
   m_ObjectHideFlags: 0
@@ -40993,15 +41003,18 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5952018924319416554}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bba63c4520bf1474d9ec5acb9e8da5bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   chestJoint: {fileID: 940636945}
-  bendAngle: 90
-  springForce: 1000
-  damper: 10
+  leftLegJoint: {fileID: 183139982}
+  rightLegJoint: {fileID: 672288855}
+  chestBendAngle: 45
+  chestBendSpeed: 5
+  legBendAngle: 30
+  legBendSpeed: 2.5
 --- !u!4 &8272516588986221304 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1328395658072173735, guid: 19fe40ea8adf4e94faee967f8b6c7ca4, type: 3}
